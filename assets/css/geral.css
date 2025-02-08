@@ -1,0 +1,33 @@
+.w-400 {
+    width: 500px;
+}
+
+.fs-xs {
+    font-size: 1rem !important;
+}
+
+.w-10 {
+    width: 10% !important;
+}
+
+a {
+    text-decoration: none;
+}
+
+.fs-big {
+    font-size: 4rem !important;
+}
+
+.online {
+    width: 10px;
+    height: 10px;
+    background-color: #2ecc71;
+    border-radius: 50%;
+}
+
+.offline {
+    width: 10px;
+    height: 10px;
+    background-color: #95a5a6;
+    border-radius: 50%;
+}
