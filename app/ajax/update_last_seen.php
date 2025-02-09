@@ -1,18 +1,22 @@
 <?php
-/*session_start();
-if (isset($_SESSION['id_user'])) {
-    require_once '../db-connect.php';
+/****************ESTADO DO USER*************/
+echo "atualizando";
+session_start();
 
+#VERIFICANDO SE O USUÁRIO ESTÁ LOGADO
+if (isset($_SESSION['username'])) {
+    #PEGANDO A INSTÂNCIA DA BD
+    include_once "db-connect.php";
+    #PEGANDO O NOME DO USUÁRIO LOGADO DA SESSION
     $id = $_SESSION['id_user'];
-    $query = "UPDATE tbuser SET last_seen = NOW() WHERE id_user = ?";
+    #QUERY
+    $query = " UPDATE tb_user
+                SET last_seen = NOW()
+                WHERE  id_user = ?";
+    $stmt = $conn->prepare($query);
+    $stmt->execute([$id]);
 
-    try {
-        $stmt = $conn->prepare($query);
-        $stmt->execute([$id]);
-        echo json_encode(['status' => 'success']);
-    } catch (PDOException $e) {
-        echo json_encode(['status' => 'error', 'message' => $e->getMessage()]);
-    }
 } else {
-    echo json_encode(['status' => 'error', 'message' => 'Usuário não autenticado']);
-} */
+    header('location: ../../index.php');
+    exit;
+}

@@ -1,8 +1,8 @@
 <?php
 $host = "localhost";
+$dbname = "app_chat";
 $user = "root";
 $pass = "";
-$dbname = "app_chat";
 
 try {
     $conn = new PDO("mysql:host=$host; dbname=$dbname", $user, $pass);

@@ -12,9 +12,6 @@ if (isset($_SESSION['username'])) {
 
     #GETTING USER CONVERSATIONS
     $conversations = getConversation($user['id_user'], $conn);
-    /*echo "<pre>";
-    print_r($conversations);
-    echo "</pre>"; */
 
     ?>
 
@@ -36,8 +33,6 @@ if (isset($_SESSION['username'])) {
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"
             integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg=="
             crossorigin="anonymous" referrerpolicy="no-referrer" />
-        <!--JQUERY-->
-        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
     </head>
 
     <body class="d-flex justify-content-center align-items-center vh-100">
@@ -55,17 +50,17 @@ if (isset($_SESSION['username'])) {
                 </div>
 
                 <div class="input-group mb-3">
-                    <input type="text" placeholder="Pesquisar..." class="form-control">
-                    <button class="btn btn-primary">
+                    <input type="text" placeholder="Pesquisar..." id="searchText" class="form-control">
+                    <button class="btn btn-primary" id="searchBtn">
                         <i class="fa fa-search"></i>
                     </button>
                 </div>
 
-                <ul class="list-group mvh-50 overflow-auto">
+                <ul class="list-group mvh-50 overflow-auto" id="chatList">
                     <?php if (!empty($conversations)) { ?>
                         <?php foreach ($conversations as $conversation) { ?>
                             <li class="list-group-item">
-                                <a href="assets/image/chat.png?user=<?= $conversation['username'] ?>"
+                                <a href="chat.php?user=<?= $conversation['username'] ?>"
                                     class="d-flex justify-content-center align-items-center p-2">
                                     <div class="d-flex align-items-between">
                                         <img src="uploads/<?= $conversation['p_file'] ?>" alt="" class="w-10 rounded-circle">
@@ -74,10 +69,13 @@ if (isset($_SESSION['username'])) {
                                         </h3>
                                     </div>
                                     <!-- ESTADO DOS USER -->
-                                    <div title="Online">
-                                        <div class="online"></div>
-                                        <span class="status-text"></span>
-                                    </div>
+                                    <?php if (last_seen($conversation['last_seen']) == "Ativo") { ?>
+                                        <div title="Online">
+                                            <div class="online"></div>
+                                            <span class="status-text"></span>
+                                        </div>
+                                    <?php } ?>
+
 
                                 </a>
                             </li>
@@ -88,15 +86,47 @@ if (isset($_SESSION['username'])) {
                             Sem mensagens, comece uma conversa...
                         </div>
                     <?php } ?>
-
-
                 </ul>
             </div>
 
         </div>
-
+        <!--JQUERY-->
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+        <!--VERIFICANDO ESTADO DO USER-->
         <script>
+            //PESQUISA NO INPUT
+            $("#searchText").on("input", function () {
+                let searchText = $(this).val();
+                //SE O INPUT ESTIVER VAZIO, NÃO RETORNA NADA
+                if (searchText == "") return;
+                $.post("app/ajax/search.php",
+                    {
+                        key: searchText
+                    },
+                    function (data, status) {
+                        $("#chatList").html(data);
+                    }
+                );
+
+            });
+
+            //CLICK SOBRE O BOTÃO DE PESQUISA
+            $("#searchBtn").on("click", function () {
+                var searchBtn = $("#searchText").val();
+                //SE O INPUT ESTIVER VAZIO, NÃO RETORNA NADA
+                if (searchText == "") return;
+                $.post("app/ajax/search.php",
+                    {
+                        key: searchText
+                    },
+                    function (data, status) {
+                        $("#chatList").html(data);
+                    }
+                );
+
+            });
+
+            /*ESTADO DO USER*/
             $(document).ready(() => {
                 /*AUTO UPDATE LAST SEEN FOR LOGGED IN USER */
                 let lastSeenUpdate = () => {
@@ -105,6 +135,11 @@ if (isset($_SESSION['username'])) {
                 lastSeenUpdate();
                 // Atualiza a cada 10 segundos
                 setInterval(lastSeenUpdate, 10000);
+                /*,*/
+                (data, status) => {
+                    console.log(data);
+
+                }
             });
 
         </script>
